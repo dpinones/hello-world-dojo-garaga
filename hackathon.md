@@ -45,5 +45,14 @@ sozo -P sepolia execute actions spawn 1 0x2a5de47ed300af27b706aaa14762fc468f5cfc
 
 sozo -P sepolia execute actions move 1 span new-position-commitment --wait --world 0x07311515dfd55106a39f79671bde8e0420127ea95e5866dd548f981be0f07fda
 
+Contract
+https://sepolia.voyager.online/class/0x07cd1bef97c57fccb10b6a627f5d100c68d0661eab0774e783c9580b1be15187#contracts
+
+Spawn
+https://sepolia.voyager.online/tx/0x41887069e3fafc4b04f874a55f70e31b48ff208b858055a9ad7e78cd633f986#overview
+
+Move
+https://sepolia.voyager.online/tx/0x1b246ab81971875c2ae99de1e0cb36e4a492d2418ab38695bd20fb3573ecf93#internalCalls
+
 Deuda
 * Por cada commiment generar un salt nuevo
