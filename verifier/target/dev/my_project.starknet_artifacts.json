@@ -1,0 +1,1 @@
+{"version":1,"contracts":[{"id":"tt4222bn62h6c","package_name":"my_project","contract_name":"UltraKeccakZKHonkVerifier","module_path":"my_project::honk_verifier::UltraKeccakZKHonkVerifier","artifacts":{"sierra":"my_project_UltraKeccakZKHonkVerifier.contract_class.json","casm":"my_project_UltraKeccakZKHonkVerifier.compiled_contract_class.json"}}]}

@@ -1,0 +1,29 @@
+[package]
+cairo-version = "=2.9.2"
+name = "dojo_starter_zk"
+version = "1.2.1"
+edition = "2024_07"
+
+[cairo]
+sierra-replace-ids = true
+
+[tool.fmt]
+sort-module-level-items = true
+max-line-length = 120
+
+[dependencies]
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.2.1" }
+
+[[target.starknet-contract]]
+build-external-contracts = ["dojo::world::world_contract::world"]
+sierra = true
+casm = true
+
+[dev-dependencies]
+cairo_test = "=2.9.2"
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.2.1" }
+
+[features]
+default = []
+
+[profile.sepolia]

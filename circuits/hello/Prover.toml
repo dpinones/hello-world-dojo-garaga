@@ -1,0 +1,6 @@
+current_x = "0"
+current_y = "0"
+new_x = "1"
+new_y = "1"
+previous_commitment = "0x2a5de47ed300af27b706aaa14762fc468f5cfc16cd8116eb6b09b0f2643ca2b9"
+salt = "0"
