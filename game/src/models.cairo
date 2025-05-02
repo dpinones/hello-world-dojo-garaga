@@ -8,11 +8,14 @@ pub struct Game {
     pub matrix_size_x: u32,
     pub matrix_size_y: u32,
     pub round_count: u32,
+    pub state: GameState,
     pub player_1: ContractAddress,
     pub player_2: ContractAddress,
     pub shepherd: ContractAddress,
     pub wolf: ContractAddress,
-    pub state: GameState,
+    pub player_1_score: u32,
+    pub player_2_score: u32,
+    pub winner: ContractAddress,
 }
 
 #[derive(Copy, Drop, Serde)]

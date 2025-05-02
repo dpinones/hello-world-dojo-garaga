@@ -53,11 +53,14 @@ pub mod game_system {
                         matrix_size_x: matrix_size_x,
                         matrix_size_y: matrix_size_y,
                         round_count: 0,
+                        state: GameState::NotStarted,
                         player_1: caller,
                         player_2: shepherd,
                         shepherd: shepherd,
                         wolf: caller,
-                        state: GameState::NotStarted,
+                        player_1_score: 0,
+                        player_2_score: 0,
+                        winner: Zero::zero(),
                     },
                 );
 
