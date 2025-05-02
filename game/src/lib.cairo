@@ -1,5 +1,5 @@
 pub mod systems {
-    pub mod actions;
+    pub mod game_system;
 }
 
 pub mod models;
@@ -15,3 +15,5 @@ pub mod interfaces {
 pub mod utils {
     pub mod constants;
 }
+
+pub mod store;

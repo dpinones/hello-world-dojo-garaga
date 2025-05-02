@@ -1,6 +1,6 @@
 [package]
 cairo-version = "=2.9.2"
-name = "dojo_starter_zk"
+name = "dojo_starter"
 version = "1.2.1"
 edition = "2024_07"
 
