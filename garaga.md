@@ -18,11 +18,11 @@ bb verify -k ./target/vk -p ./target/proof
 
 # TUTORIAL - Crear prueba y poder chequearla en cairo
 
-source venv/bin/activate
+source garaga-venv/bin/activate
 
 nargo build
 
-bb write_vk --scheme ultra_honk --oracle_hash keccak -b target/move.json -o target
+bb write_vk --scheme ultra_honk --oracle_hash keccak -b target/kill_sheep.json -o target
 
 garaga gen --system ultra_keccak_zk_honk --vk target/vk
 

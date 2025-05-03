@@ -1,0 +1,6 @@
+[package]
+name = "kill_sheep"
+type = "bin"
+authors = [""]
+
+[dependencies]

@@ -4,7 +4,7 @@ description = "The official Dojo Starter guide, the quickest and most streamline
 seed = "dojo_starter_zk"
 
 [namespace]
-default = "dojo_starter_zk"
+default = "wolf_game_zk"
 
 [env]
 rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
@@ -14,4 +14,4 @@ account_address = "0x053c80dd051d0a515ba87dc8a3a32d56dc792e30d046ced89c6a537364e
 private_key = "0x07222e994e5fd0379d6224d8e7412c01c2008b993fb6b81f3f8dca5465d9123d"
 
 [writers]
-"dojo_starter_zk" = ["dojo_starter_zk-actions"]
+"wolf_game_zk" = ["wolf_game_zk-game_system"]

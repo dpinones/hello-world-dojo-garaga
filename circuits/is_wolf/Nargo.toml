@@ -1,0 +1,6 @@
+[package]
+name = "is_wolf"
+type = "bin"
+authors = [""]
+
+[dependencies]

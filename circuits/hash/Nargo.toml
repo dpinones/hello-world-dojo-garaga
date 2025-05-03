@@ -1,6 +1,0 @@
-[package]
-name = "hash"
-type = "bin"
-authors = [""]
-
-[dependencies]

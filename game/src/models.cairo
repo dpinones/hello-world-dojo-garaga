@@ -5,8 +5,6 @@ use starknet::{ContractAddress};
 pub struct Game {
     #[key]
     pub id: u32,
-    pub matrix_size_x: u32,
-    pub matrix_size_y: u32,
     pub round_count: u32,
     pub state: GameState,
     pub player_1: ContractAddress,
@@ -27,6 +25,7 @@ pub struct Round {
     pub sheep_count: u32,
     pub surviving_sheep: u32,
     pub state: RoundState,
+    pub suspicious_sheep: u32,
 }
 
 #[derive(Copy, Drop, Serde)]

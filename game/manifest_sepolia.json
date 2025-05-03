@@ -1312,12 +1312,12 @@
   },
   "contracts": [
     {
-      "address": "0x519ecf0eecb82f96e294c1ef6cd7e583dcb03950f1c80622e54d4ed764a85f",
-      "class_hash": "0xd7e519e2d1f56d9085c798b2216b9d4b52dff96aa562d61bda8046ca91694c",
+      "address": "0x7bb0fa7b35b20b9031054a229e532967a5192467d8db75349b492c0678bd1d4",
+      "class_hash": "0x50cec7ddbafaaf8efa2acaff2141e96a693f15920aeac69de49cb8523bf82ba",
       "abi": [
         {
           "type": "impl",
-          "name": "actions__ContractImpl",
+          "name": "game_system__ContractImpl",
           "interface_name": "dojo::contract::interface::IContract"
         },
         {
@@ -1327,7 +1327,7 @@
         },
         {
           "type": "impl",
-          "name": "actions__DeployedContractImpl",
+          "name": "game_system__DeployedContractImpl",
           "interface_name": "dojo::meta::interface::IDeployedResource"
         },
         {
@@ -1367,8 +1367,22 @@
         },
         {
           "type": "impl",
-          "name": "ActionsImpl",
-          "interface_name": "dojo_starter_zk::systems::actions::IActions"
+          "name": "GameSystemImpl",
+          "interface_name": "dojo_starter::systems::game_system::IGameSystem"
+        },
+        {
+          "type": "struct",
+          "name": "core::integer::u256",
+          "members": [
+            {
+              "name": "low",
+              "type": "core::integer::u128"
+            },
+            {
+              "name": "high",
+              "type": "core::integer::u128"
+            }
+          ]
         },
         {
           "type": "struct",
@@ -1382,19 +1396,35 @@
         },
         {
           "type": "interface",
-          "name": "dojo_starter_zk::systems::actions::IActions",
+          "name": "dojo_starter::systems::game_system::IGameSystem",
           "items": [
             {
               "type": "function",
-              "name": "spawn",
+              "name": "create_game",
+              "inputs": [
+                {
+                  "name": "player_2",
+                  "type": "core::starknet::contract_address::ContractAddress"
+                }
+              ],
+              "outputs": [
+                {
+                  "type": "core::integer::u32"
+                }
+              ],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "submit_wolf_commitment",
               "inputs": [
                 {
                   "name": "game_id",
                   "type": "core::integer::u32"
                 },
                 {
-                  "name": "position_commitment",
-                  "type": "core::felt252"
+                  "name": "wolf_commitment",
+                  "type": "core::integer::u256"
                 }
               ],
               "outputs": [],
@@ -1402,7 +1432,7 @@
             },
             {
               "type": "function",
-              "name": "move",
+              "name": "wolf_kill_sheep",
               "inputs": [
                 {
                   "name": "game_id",
@@ -1413,8 +1443,48 @@
                   "type": "core::array::Span::<core::felt252>"
                 },
                 {
-                  "name": "new_position_commitment",
-                  "type": "core::felt252"
+                  "name": "sheep_to_kill",
+                  "type": "core::integer::u32"
+                },
+                {
+                  "name": "new_wolf_commitment",
+                  "type": "core::integer::u256"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "shepherd_mark_suspicious",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u32"
+                },
+                {
+                  "name": "sheep_to_mark",
+                  "type": "core::integer::u32"
+                }
+              ],
+              "outputs": [],
+              "state_mutability": "external"
+            },
+            {
+              "type": "function",
+              "name": "check_is_wolf",
+              "inputs": [
+                {
+                  "name": "game_id",
+                  "type": "core::integer::u32"
+                },
+                {
+                  "name": "proof",
+                  "type": "core::array::Span::<core::felt252>"
+                },
+                {
+                  "name": "sheep_to_check",
+                  "type": "core::integer::u32"
                 }
               ],
               "outputs": [],
@@ -1521,7 +1591,7 @@
         },
         {
           "type": "event",
-          "name": "dojo_starter_zk::systems::actions::actions::Event",
+          "name": "dojo_starter::systems::game_system::game_system::Event",
           "kind": "enum",
           "variants": [
             {
@@ -1538,11 +1608,14 @@
         }
       ],
       "init_calldata": [],
-      "tag": "dojo_starter_zk-actions",
-      "selector": "0x4cda70dc890b2e8dff26659239322d30884b5ae91faa599449f5d74c83ba005",
+      "tag": "wolf_game_zk-game_system",
+      "selector": "0x384efda2fbddb32130f1a4331c65e5b7ffb5cda690f433677341c1d9da23f03",
       "systems": [
-        "spawn",
-        "move",
+        "create_game",
+        "submit_wolf_commitment",
+        "wolf_kill_sheep",
+        "shepherd_mark_suspicious",
+        "check_is_wolf",
         "upgrade"
       ]
     }
@@ -1551,15 +1624,21 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0x5b62f813be173bbcbec90f429122682e0bcc3600897c2215bef9685b1bcf72c",
-      "tag": "dojo_starter_zk-Game",
-      "selector": "0x69b4c905629aff23a0e20e81763a8ca778a69dad3c85d7f037488a1e32dbe40"
+      "class_hash": "0x7ca9b932c57bf45a51f5487838ac7d6728c75f750b78e85eb7f7595f42e1ba8",
+      "tag": "wolf_game_zk-Cell",
+      "selector": "0x215c2bf00f677573821e441c3a0821424cb16b95c66eb96098dc37facfcb941"
     },
     {
       "members": [],
-      "class_hash": "0xd6efa803757a997c59f499e384215dff7132950a24b18ea4a68d8e900e1390",
-      "tag": "dojo_starter_zk-Player",
-      "selector": "0x3b679f45037b0913a6b1b464c64ad0d32baf2a5a95add768d9ba74201c5ada9"
+      "class_hash": "0xc5233164f18c259e657417094d4cb688488df1bf1fcd77fe9415031bdcba0f",
+      "tag": "wolf_game_zk-Game",
+      "selector": "0x7728334050956bf632b55eed7352b843d02cae7a455ca7d43eb708731a4c93b"
+    },
+    {
+      "members": [],
+      "class_hash": "0x30327b68df45c73c9a9a795a746a3eb20fb84926433af8242c0d05d6d750252",
+      "tag": "wolf_game_zk-Round",
+      "selector": "0x3a38a1699427558117bd7fb7fce5f7d017ea65f95f85f9bede66e0c8add261e"
     }
   ],
   "events": [],
