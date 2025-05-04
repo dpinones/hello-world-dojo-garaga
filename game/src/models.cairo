@@ -25,6 +25,7 @@ pub struct Round {
     pub surviving_sheep: u32,
     pub state: RoundState,
     pub suspicious_sheep_index: u32,
+    pub current_turn: ContractAddress,
 }
 
 #[derive(Copy, Drop, Serde)]

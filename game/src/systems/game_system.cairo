@@ -71,6 +71,7 @@ pub mod game_system {
                         surviving_sheep: SHEEP_COUNT,
                         state: RoundState::WaitingForWolfCommitment,
                         suspicious_sheep_index: 999,
+                        current_turn: player_1, // Initial turn is wolf's (player_1)
                     },
                 );
 
@@ -108,6 +109,7 @@ pub mod game_system {
             // No need for wolf commitment since player 1 always starts as wolf
             // We can skip the WaitingForWolfCommitment state
             round.state = RoundState::WaitingForSheepToKill;
+            round.current_turn = game.wolf; // Set initial turn to Wolf player
 
             store.set_game(game);
             store.set_round(round);
@@ -187,6 +189,9 @@ pub mod game_system {
                 game.player_2_score += 1;
             }
 
+            // Change turn to Shepherd
+            round.current_turn = game.shepherd;
+
             store.set_round(round);
             store.set_game(game);
         }
@@ -205,6 +210,7 @@ pub mod game_system {
             // Get round
             let mut round = store.get_round(game_id);
             assert(round.state == RoundState::WaitingForSheepToKill, 'not in WaitingForSheepToKill');
+            assert(round.current_turn == game.shepherd, 'Not shepherd turn');
 
             // Validate sheep number
             assert(sheep_to_mark_index < SHEEP_COUNT, 'Invalid sheep number');
@@ -212,6 +218,8 @@ pub mod game_system {
 
             round.state = RoundState::WaitingForWolfResult;
             round.suspicious_sheep_index = sheep_to_mark_index;
+            round.current_turn = game.wolf; // Set turn back to Wolf player for result
+
             store.set_round(round);
         }
 
@@ -229,6 +237,7 @@ pub mod game_system {
             // Get round
             let mut round = store.get_round(game_id);
             assert(round.state == RoundState::WaitingForWolfResult, 'not in WaitingForWolfResult');
+            assert(round.current_turn == game.wolf, 'Not wolf turn');
 
             // Verificar que la oveja haya sido marcada como sospechosa previamente
             assert(round.suspicious_sheep_index != 999, 'Sheep not marked as suspicious');
@@ -264,6 +273,7 @@ pub mod game_system {
                 round.surviving_sheep = 16;
                 round.wolf_commitment = 0;
                 round.state = RoundState::WaitingForWolfCommitment;
+                round.current_turn = game.wolf; // Reset turn to Wolf
                 
                 // After 3 rounds, when roles swap, we need to wait for wolf commitment
                 if game.round_count == MAX_ROUNDS_PER_ROLE {
@@ -271,6 +281,8 @@ pub mod game_system {
                     let temp = game.wolf;
                     game.wolf = game.shepherd;
                     game.shepherd = temp;
+                    // Update turn to the new wolf player
+                    round.current_turn = game.wolf;
                 }
 
                 // Si se completaron todas las rondas (6), finalizar el juego
@@ -295,6 +307,11 @@ pub mod game_system {
                     i += 1;
                 };
                 
+                // Set next round to start with Wolf's turn
+                if game.state == GameState::InProgress {
+                    round.current_turn = game.wolf;
+                    round.state = RoundState::WaitingForSheepToKill;
+                }
             } else {
 
                 // Marcar oveja como muerta
