@@ -38,6 +38,7 @@ pub struct Cell {
 
 #[derive(Serde, Copy, Drop, IntrospectPacked, PartialEq)]
 pub enum GameState {
+    WaitingForPlayer2,
     NotStarted,
     InProgress,
     Finished,
@@ -46,6 +47,7 @@ pub enum GameState {
 impl GameStateIntoFelt252 of Into<GameState, felt252> {
     fn into(self: GameState) -> felt252 {
         match self {
+            GameState::WaitingForPlayer2 => 0,
             GameState::NotStarted => 1,
             GameState::InProgress => 2,
             GameState::Finished => 3,

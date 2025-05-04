@@ -1,6 +1,7 @@
 #[starknet::interface]
 pub trait IGameSystem<T> {
     fn create_game(ref self: T) -> u32;
+    fn join_game(ref self: T, game_id: u32);
     fn submit_wolf_commitment(ref self: T, game_id: u32, wolf_commitment: u256);
     fn wolf_kill_sheep(ref self: T, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32);
     fn shepherd_mark_suspicious(ref self: T, game_id: u32, sheep_to_mark_index: u32);
@@ -39,27 +40,22 @@ pub mod game_system {
             let mut store = StoreTrait::new(ref world);
 
             let player_1 = get_caller_address();
-            let player_2 = get_caller_address(); // TODO: Remove this
-
-            // Input validation
-            // assert(player_2.is_non_zero() && player_2 != player_1, 'Invalid player_2 address');
+            // Initialize player_2 as zero address
+            let player_2 = Zero::zero();
 
             let game_id = world.dispatcher.uuid() + 1;
 
-            // Inicialmente, player_1 es el lobo y player_2 es el pastor
-            // Después de 3 rondas, intercambian roles
-
-            // Create game
+            // Create game with WaitingForPlayer2 state
             store
                 .set_game(
                     Game {
                         id: game_id,
                         round_count: 0,
-                        state: GameState::NotStarted,
+                        state: GameState::WaitingForPlayer2,
                         player_1: player_1,
                         player_2: player_2,
                         wolf: player_1, // Player 1 comienza como lobo
-                        shepherd: player_2, // Player 2 comienza como pastor
+                        shepherd: Zero::zero(), // Shepherd will be set when player 2 joins
                         player_1_score: 0,
                         player_2_score: 0,
                         winner: Zero::zero(),
@@ -87,6 +83,36 @@ pub mod game_system {
             game_id
         }
 
+        fn join_game(ref self: ContractState, game_id: u32) {
+            let mut world = self.world(@DEFAULT_NS());
+            let mut store = StoreTrait::new(ref world);
+
+            let player_2 = get_caller_address();
+
+            // Get game
+            let mut game = store.get_game(game_id);
+            
+            // Validations
+            assert(game.state == GameState::WaitingForPlayer2, 'Game not waiting for player 2');
+            assert(player_2 != game.player_1, 'Cannot join your own game');
+            assert(player_2.is_non_zero(), 'Invalid player_2 address');
+
+            // Get round
+            let mut round = store.get_round(game_id);
+            
+            // Update game
+            game.player_2 = player_2;
+            game.shepherd = player_2; // Player 2 starts as shepherd
+            game.state = GameState::InProgress; // Game starts immediately in InProgress
+            
+            // No need for wolf commitment since player 1 always starts as wolf
+            // We can skip the WaitingForWolfCommitment state
+            round.state = RoundState::WaitingForSheepToKill;
+
+            store.set_game(game);
+            store.set_round(round);
+        }
+
         fn submit_wolf_commitment(ref self: ContractState, game_id: u32, wolf_commitment: u256) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
@@ -96,7 +122,7 @@ pub mod game_system {
             // Get game
             let mut game = store.get_game(game_id);
             assert(caller == game.wolf, 'Only wolf can submit commitment');
-            assert(game.state == GameState::NotStarted, 'Game already started');
+            assert(game.state == GameState::InProgress, 'Game not ready for commitment');
             assert(wolf_commitment != 0, 'Invalid commitment');
 
             // Get round
@@ -238,9 +264,8 @@ pub mod game_system {
                 round.surviving_sheep = 16;
                 round.wolf_commitment = 0;
                 round.state = RoundState::WaitingForWolfCommitment;
-                game.state = GameState::NotStarted;
-
-                // Si se han completado 3 rondas, intercambiar roles
+                
+                // After 3 rounds, when roles swap, we need to wait for wolf commitment
                 if game.round_count == MAX_ROUNDS_PER_ROLE {
                     // Intercambiar roles después de 3 rondas
                     let temp = game.wolf;
@@ -261,14 +286,15 @@ pub mod game_system {
                         // Empate
                         game.winner = Zero::zero();
                     }
-                } else {
-                    // Reset: Limpiar todas las marcas de oveja sospechosa para la nueva ronda
-                    let mut i: u32 = 0;
-                    while i < SHEEP_COUNT {
-                        store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
-                        i += 1;
-                    };
-                }
+                } 
+
+                // Reset: Limpiar todas las marcas de oveja sospechosa para la nueva ronda
+                let mut i: u32 = 0;
+                while i < SHEEP_COUNT {
+                    store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
+                    i += 1;
+                };
+                
             } else {
 
                 // Marcar oveja como muerta
