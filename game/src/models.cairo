@@ -22,10 +22,9 @@ pub struct Round {
     #[key]
     pub game_id: u32,
     pub wolf_commitment: u256,
-    pub sheep_count: u32,
     pub surviving_sheep: u32,
     pub state: RoundState,
-    pub suspicious_sheep: u32,
+    pub suspicious_sheep_index: u32,
 }
 
 #[derive(Copy, Drop, Serde)]
@@ -33,6 +32,7 @@ pub struct Round {
 pub struct Cell {
     #[key]
     pub id: u32,
+    pub value: u32,
     pub is_alive: bool,
 }
 

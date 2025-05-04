@@ -7,29 +7,30 @@
 use std::hash::poseidon;
 
 fn main(
-    wolf_index: Field,
-    wolf_salt: Field,
+    wolf_value: Field, // 5
+    wolf_index: Field, // 4
+    wolf_salt: Field, // 0
     sheep_positions: [Field; 16],
     sheep_alive: [bool; 16],
+
     wolf_commitment: pub Field,
-    sheep_to_kill_index: pub Field,
+    sheep_to_kill_index: pub Field, // 0
 ) {
     // Verify that the wolf commitment is valid
-    assert(poseidon::bn254::hash_2([wolf_index, wolf_salt]) == wolf_commitment);
+    assert(poseidon::bn254::hash_2([wolf_value, wolf_salt]) == wolf_commitment);
+
+    // Verify that the wolf is in the correct position
+    assert(sheep_positions[wolf_index as u64] == wolf_value);
 
     // Verify that the sheep to kill is alive
-    assert(sheep_alive[sheep_to_kill_index as u64]);
+    assert(sheep_alive[sheep_to_kill_index as u64] == true);
 
-    // Verify that the sheep to kill is adjacent to the wolf
-    let wolf_position = sheep_positions[wolf_index as u64];
-    let sheep_position = sheep_positions[sheep_to_kill_index as u64];
-    
-    Calculate row and column for wolf and sheep
-    let wolf_position_as_u64 = wolf_position as u64;
+    // Calculate row and column for wolf and sheep
+    let wolf_position_as_u64 = wolf_index as u64;
     let wolf_row = wolf_position_as_u64 / 4;
     let wolf_col = wolf_position_as_u64 % 4;
     
-    let sheep_position_as_u64 = sheep_position as u64;
+    let sheep_position_as_u64 = sheep_to_kill_index as u64;
     let sheep_row = sheep_position_as_u64 / 4;
     let sheep_col = sheep_position_as_u64 % 4;
     

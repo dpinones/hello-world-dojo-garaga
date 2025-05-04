@@ -1,10 +1,10 @@
 #[starknet::interface]
 pub trait IGameSystem<T> {
-    fn create_game(ref self: T, player_2: starknet::ContractAddress) -> u32;
+    fn create_game(ref self: T) -> u32;
     fn submit_wolf_commitment(ref self: T, game_id: u32, wolf_commitment: u256);
-    fn wolf_kill_sheep(ref self: T, game_id: u32, proof: Span<felt252>, sheep_to_kill: u32, new_wolf_commitment: u256);
-    fn shepherd_mark_suspicious(ref self: T, game_id: u32, sheep_to_mark: u32);
-    fn check_is_wolf(ref self: T, game_id: u32, proof: Span<felt252>, sheep_to_check: u32);
+    fn wolf_kill_sheep(ref self: T, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32);
+    fn shepherd_mark_suspicious(ref self: T, game_id: u32, sheep_to_mark_index: u32);
+    fn check_is_wolf(ref self: T, game_id: u32, proof: Span<felt252>);
 }
 
 #[dojo::contract]
@@ -14,7 +14,7 @@ pub mod game_system {
     use dojo_starter::models::{Cell, Game, GameState, Round, RoundState};
 
     use dojo_starter::store::StoreTrait;
-    use starknet::{ContractAddress, get_caller_address};
+    use starknet::get_caller_address;
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
 
@@ -29,19 +29,20 @@ pub mod game_system {
     const SHEEP_COUNT: u32 = 16;
 
     pub fn DEFAULT_NS() -> ByteArray {
-        "wolf_game_zk"
+        "wolf_game_zk1"
     }
 
     #[abi(embed_v0)]
     impl GameSystemImpl of IGameSystem<ContractState> {
-        fn create_game(ref self: ContractState, player_2: ContractAddress) -> u32 {
+        fn create_game(ref self: ContractState) -> u32 {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
 
             let player_1 = get_caller_address();
+            let player_2 = get_caller_address(); // TODO: Remove this
 
             // Input validation
-            assert(player_2.is_non_zero() && player_2 != player_1, 'Invalid player_2 address');
+            // assert(player_2.is_non_zero() && player_2 != player_1, 'Invalid player_2 address');
 
             let game_id = world.dispatcher.uuid() + 1;
 
@@ -71,17 +72,16 @@ pub mod game_system {
                     Round {
                         game_id: game_id,
                         wolf_commitment: 0,
-                        sheep_count: SHEEP_COUNT,
                         surviving_sheep: SHEEP_COUNT,
                         state: RoundState::WaitingForWolfCommitment,
-                        suspicious_sheep: 0,
+                        suspicious_sheep_index: 999,
                     },
                 );
 
             // Initialize all sheep as alive and not marked
-            let mut i: u32 = 1;
-            while i <= SHEEP_COUNT {
-                store.set_cell(Cell { id: i, is_alive: true });
+            let mut i: u32 = 0;
+            while i < SHEEP_COUNT {
+                store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
                 i += 1;
             };
             game_id
@@ -113,7 +113,7 @@ pub mod game_system {
         }
 
         fn wolf_kill_sheep(
-            ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_kill: u32, new_wolf_commitment: u256,
+            ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32,
         ) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
@@ -130,8 +130,8 @@ pub mod game_system {
             assert(round.state == RoundState::WaitingForSheepToKill, 'not in WaitingForSheepToKill');
 
             // Validate sheep number
-            assert(sheep_to_kill < SHEEP_COUNT, 'Invalid sheep number');
-            assert(store.get_cell(sheep_to_kill).is_alive, 'Sheep already dead');
+            assert(sheep_to_kill_index < SHEEP_COUNT, 'Invalid sheep number');
+            assert(store.get_cell(sheep_to_kill_index).is_alive, 'Sheep already dead');
 
             // Create public inputs array [game_id, wolf_commitment, sheep_to_kill]
             let mut res = syscalls::library_call_syscall(
@@ -146,12 +146,13 @@ pub mod game_system {
             let sheep_to_kill_index: u32 = (*public_inputs[1]).try_into().unwrap();
 
             assert(wolf_commitment == round.wolf_commitment, 'Invalid wolf commitment');
-            assert(sheep_to_kill_index == sheep_to_kill, 'Invalid sheep to kill');
+            assert(sheep_to_kill_index == sheep_to_kill_index, 'Invalid sheep to kill');
 
             // Update game state
-            store.set_cell(Cell { id: sheep_to_kill, is_alive: false });
+            let mut sheep_to_kill = store.get_cell(sheep_to_kill_index);
+            sheep_to_kill.is_alive = false;
+            store.set_cell(sheep_to_kill);
             round.surviving_sheep -= 1;
-            round.wolf_commitment = new_wolf_commitment; // Update wolf commitment
 
             // Incrementar puntuación del lobo actual
             if game.wolf == game.player_1 {
@@ -164,7 +165,7 @@ pub mod game_system {
             store.set_game(game);
         }
 
-        fn shepherd_mark_suspicious(ref self: ContractState, game_id: u32, sheep_to_mark: u32) {
+        fn shepherd_mark_suspicious(ref self: ContractState, game_id: u32, sheep_to_mark_index: u32) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
 
@@ -180,15 +181,15 @@ pub mod game_system {
             assert(round.state == RoundState::WaitingForSheepToKill, 'not in WaitingForSheepToKill');
 
             // Validate sheep number
-            assert(sheep_to_mark < SHEEP_COUNT, 'Invalid sheep number');
-            assert(store.get_cell(sheep_to_mark).is_alive, 'Sheep already dead');
+            assert(sheep_to_mark_index < SHEEP_COUNT, 'Invalid sheep number');
+            assert(store.get_cell(sheep_to_mark_index).is_alive, 'Sheep already dead');
 
             round.state = RoundState::WaitingForWolfResult;
-            round.suspicious_sheep = sheep_to_mark;
+            round.suspicious_sheep_index = sheep_to_mark_index;
             store.set_round(round);
         }
 
-        fn check_is_wolf(ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_check: u32) {
+        fn check_is_wolf(ref self: ContractState, game_id: u32, proof: Span<felt252>) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
 
@@ -203,12 +204,12 @@ pub mod game_system {
             let mut round = store.get_round(game_id);
             assert(round.state == RoundState::WaitingForWolfResult, 'not in WaitingForWolfResult');
 
-            // Validate sheep number
-            assert(sheep_to_check < SHEEP_COUNT, 'Invalid sheep number');
-            assert(store.get_cell(sheep_to_check).is_alive, 'Sheep already dead');
-
             // Verificar que la oveja haya sido marcada como sospechosa previamente
-            assert(round.suspicious_sheep == sheep_to_check, 'Sheep not marked as suspicious');
+            assert(round.suspicious_sheep_index != 999, 'Sheep not marked as suspicious');
+
+            // Validate sheep number
+            assert(round.suspicious_sheep_index < SHEEP_COUNT, 'Invalid sheep number');
+            assert(store.get_cell(round.suspicious_sheep_index).is_alive, 'Sheep already dead');
 
             // Create public inputs array [game_id, sheep_to_check, is_wolf]
             let mut res = syscalls::library_call_syscall(
@@ -221,21 +222,12 @@ pub mod game_system {
 
             // We don't know if it's the wolf yet - the proof will tell us
             // The verifier verifies that is_wolf is calculated correctly
-            let sheep_to_check_index: u32 = (*public_inputs[0]).try_into().unwrap();
-            let is_wolf_result: u32 = (*public_inputs[1]).try_into().unwrap();
+            let wolf_commitment = *public_inputs[0];
+            let sheep_to_check_index: u32 = (*public_inputs[1]).try_into().unwrap();
+            let is_wolf_result: u32 = (*public_inputs[2]).try_into().unwrap();
 
-            assert(sheep_to_check_index == sheep_to_check, 'Invalid sheep to check');
-
-            // Incrementar puntuación del pastor actual
-            if game.shepherd == game.player_1 {
-                game.player_1_score += 1;
-            } else {
-                game.player_2_score += 1;
-            }
-
-            // Marcar oveja como muerta
-            store.set_cell(Cell { id: sheep_to_check, is_alive: false });
-            round.surviving_sheep -= 1;
+            assert(wolf_commitment == round.wolf_commitment, 'Invalid wolf commitment');
+            assert(sheep_to_check_index == round.suspicious_sheep_index, 'Invalid sheep to check');
 
             // Si mató al lobo, la ronda se completa
             if is_wolf_result == 1 {
@@ -269,14 +261,57 @@ pub mod game_system {
                         // Empate
                         game.winner = Zero::zero();
                     }
+                } else {
+                    // Reset: Limpiar todas las marcas de oveja sospechosa para la nueva ronda
+                    let mut i: u32 = 0;
+                    while i < SHEEP_COUNT {
+                        store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
+                        i += 1;
+                    };
+                }
+            } else {
+
+                // Marcar oveja como muerta
+                let mut sheep_to_check = store.get_cell(sheep_to_check_index);
+                sheep_to_check.is_alive = false;
+                store.set_cell(sheep_to_check);
+                round.surviving_sheep -= 1;
+
+                // Incrementar puntuación del pastor actual
+                if game.shepherd == game.player_1 {
+                    game.player_1_score += 1;
+                } else {
+                    game.player_2_score += 1;
                 }
 
-                // Reset: Limpiar todas las marcas de oveja sospechosa para la nueva ronda
-                let mut i: u32 = 1;
-                while i <= SHEEP_COUNT {
-                    store.set_cell(Cell { id: i, is_alive: true });
-                    i += 1;
-                };
+                // hay que mezclar solamente las ovejas vivas
+                // basicamente son todos los cells con el campo is_alive = true
+                // hay que mezclarlos en una lista
+                // y luego asignarlos de nuevo a los cells
+                // pero no se puede usar el store.set_cell porque no se puede iterar sobre los cells
+                // hay que usar un array
+                
+                // let mut sheep_count: u32 = 0;
+                // let mut sheep_array: [Cell; SHEEP_COUNT] = [Cell { id: 0, value: 0, is_alive: false }; SHEEP_COUNT];
+                // let mut i: u32 = 0;
+                // while i < SHEEP_COUNT {
+                //     if store.get_cell(i).is_alive {
+                //         sheep_array[sheep_count] = store.get_cell(i);
+                //         sheep_count += 1;
+                //     }
+                //     i += 1;
+                // }
+
+                // // mezclar el array
+                // let mut rng = rand::thread_rng();
+                // sheep_array.shuffle(&mut rng);
+
+                // // asignar los cells de nuevo
+                // i = 0;
+                // while i < sheep_count {
+                //     store.set_cell(sheep_array[i]);
+                //     i += 1;
+                // }
             }
 
             store.set_game(game);

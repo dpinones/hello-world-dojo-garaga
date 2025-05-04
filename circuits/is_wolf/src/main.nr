@@ -12,15 +12,15 @@ fn main(
     wolf_index: Field,  // Which sheep is the wolf
     wolf_salt: Field,         // Secret salt for the commitment
     sheep_alive: [bool; 16],  // Alive status of each sheep
-    wolf_commitment_input: Field, // Commitment hash as private input
     
     // Public inputs
+    wolf_commitment: pub Field, // Commitment hash as private input
     sheep_to_check_index: pub Field, // Which sheep to check
     is_wolf_result: pub Field  // Result: 1 if sheep is wolf, 0 if not
 ) {
     // 1. Verify the wolf commitment is valid
     let computed_commitment = poseidon::bn254::hash_2([wolf_index, wolf_salt]);
-    assert(computed_commitment == wolf_commitment_input);
+    assert(computed_commitment == wolf_commitment);
     
     // 2. Verify the sheep to check is alive
     assert(sheep_alive[sheep_to_check_index as u64]);

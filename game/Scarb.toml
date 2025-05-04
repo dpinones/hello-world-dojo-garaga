@@ -1,29 +1,27 @@
 [package]
-cairo-version = "=2.9.2"
+cairo-version = "=2.9.4"
 name = "dojo_starter"
-version = "1.2.1"
+version = "1.4.0"
 edition = "2024_07"
 
 [cairo]
 sierra-replace-ids = true
 
+[dependencies]
+starknet = "2.9.4"
+dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.4.0" }
+
+[dev-dependencies]
+cairo_test = "2.9.4"
+dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.4.0" }
+
+[[target.starknet-contract]]
+sierra = true
+casm = true
+build-external-contracts = ["dojo::world::world_contract::world"]
+
 [tool.fmt]
 sort-module-level-items = true
 max-line-length = 120
-
-[dependencies]
-dojo = { git = "https://github.com/dojoengine/dojo", tag = "v1.2.1" }
-
-[[target.starknet-contract]]
-build-external-contracts = ["dojo::world::world_contract::world"]
-sierra = true
-casm = true
-
-[dev-dependencies]
-cairo_test = "=2.9.2"
-dojo_cairo_test = { git = "https://github.com/dojoengine/dojo", tag = "v1.2.1" }
-
-[features]
-default = []
 
 [profile.sepolia]
