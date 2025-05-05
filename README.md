@@ -1,67 +1,67 @@
 # Hunting the Wolf - ZK Game
 
-Un juego de deducción donde un lobo se esconde entre ovejas y un pastor intenta encontrarlo, usando pruebas de conocimiento cero (ZK) para mantener oculta la identidad del lobo.
+A deduction game where a wolf hides among sheep and a shepherd tries to find it, using zero-knowledge proofs (ZK) to keep the wolf's identity hidden.
 
-## Concepto del Juego
+## Game Concept
 
-Hunting the Wolf es un juego donde un jugador (el lobo) se disfraza como una oveja y otro jugador (el pastor) intenta encontrarlo entre las demás ovejas. El juego implementa pruebas de conocimiento cero para mantener la identidad del lobo privada, añadiendo una capa de seguridad criptográfica al juego.
+Hunting the Wolf is a game where one player (the wolf) disguises as a sheep and another player (the shepherd) tries to find it among the other sheep. The game implements zero-knowledge proofs to keep the wolf's identity private, adding a layer of cryptographic security to the game.
 
-### Mecánica del Juego
+### Game Mechanics
 
-1. **Inicio del Juego**:
-   - Se genera un tablero con 16 ovejas, cada una con un número asignado.
-   - El lobo elige una oveja para ocultar su identidad y envía un compromiso criptográfico que mantiene en secreto su elección.
+1. **Game Start**:
+   - A board with 16 sheep is generated, each with an assigned number.
+   - The wolf chooses a sheep to hide its identity and sends a cryptographic commitment that keeps its choice secret.
 
-2. **Rondas**:
-   - En cada ronda, el lobo debe seleccionar una oveja adyacente para matar, verificado mediante pruebas ZK.
-   - La oveja aparece muerta en el tablero.
-   - El pastor marca una oveja como sospechosa.
-   - El lobo genera una prueba ZK que verifica si la oveja marcada es o no el lobo, sin revelar su identidad.
-   - Si la oveja marcada es el lobo, la ronda termina. Si no, la oveja muere y el juego continúa.
+2. **Rounds**:
+   - In each round, the wolf must select an adjacent sheep to kill, verified through ZK proofs.
+   - The sheep appears dead on the board.
+   - The shepherd marks a sheep as suspicious.
+   - The wolf generates a ZK proof that verifies whether the marked sheep is the wolf or not, without revealing its identity.
+   - If the marked sheep is the wolf, the round ends. If not, the sheep dies and the game continues.
 
-3. **Final**:
-   - Después de 3 rondas, los jugadores intercambian roles (el pastor se convierte en lobo y viceversa).
-   - El juego finaliza después de 6 rondas totales (3 por cada rol).
-   - La puntuación se basa en la cantidad de ovejas que cada jugador logró eliminar.
-   - El jugador con la puntuación más alta gana.
+3. **End**:
+   - After 3 rounds, players swap roles (the shepherd becomes the wolf and vice versa).
+   - The game ends after 6 total rounds (3 for each role).
+   - The score is based on the number of sheep each player managed to eliminate.
+   - The player with the highest score wins.
 
-## Sistema de Privacidad
+## Privacy System
 
-El juego implementa dos circuitos ZK principales:
+The game implements two main ZK circuits:
 
-1. **kill_sheep**: Verifica que:
-   - El lobo es quien dice ser (coincide con el compromiso)
-   - La oveja a matar está adyacente al lobo (en horizontal, vertical o diagonal)
-   - La oveja a matar está viva
+1. **kill_sheep**: Verifies that:
+   - The wolf is who it claims to be (matches the commitment)
+   - The sheep to be killed is adjacent to the wolf (horizontally, vertically, or diagonally)
+   - The sheep to be killed is alive
 
-2. **is_wolf**: Verifica que:
-   - El compromiso del lobo es válido
-   - La oveja marcada está viva
-   - Si la oveja marcada es o no el lobo
+2. **is_wolf**: Verifies that:
+   - The wolf's commitment is valid
+   - The marked sheep is alive
+   - Whether the marked sheep is the wolf or not
 
-### Flujo de Privacidad
+### Privacy Flow
 
-1. **Compromiso inicial del lobo**:
-   - El lobo elige una oveja y genera un valor aleatorio (salt) que guarda en localStorage
-   - Crea un compromiso usando la función Poseidon: `poseidon([wolf_sheep_number, wolf_salt])`
-   - Solo este hash se publica en la blockchain, manteniendo la identidad del lobo secreta
+1. **Wolf's initial commitment**:
+   - The wolf chooses a sheep and generates a random value (salt) that is saved in localStorage
+   - Creates a commitment using the Poseidon function: `poseidon([wolf_sheep_number, wolf_salt])`
+   - Only this hash is published on the blockchain, keeping the wolf's identity secret
 
-2. **Muerte de la oveja**:
-   - El lobo selecciona una oveja adyacente para matar
-   - Genera una prueba ZK con el circuito `kill_sheep`
-   - La oveja muere y se guarda en el contrato
+2. **Sheep's death**:
+   - The wolf selects an adjacent sheep to kill
+   - Generates a ZK proof with the `kill_sheep` circuit
+   - The sheep dies and is saved in the contract
 
-3. **Elección de la oveja sospechosa por el pastor**:
-   - El pastor selecciona una oveja sospechosa
-   - Esta selección se guarda en el contrato
+3. **Shepherd's selection of the suspicious sheep**:
+   - The shepherd selects a suspicious sheep
+   - This selection is saved in the contract
 
-4. **El lobo genera una prueba ZK para verificar si la oveja marcada es el lobo**:
-   - El frontend del lobo esta esperando a que el pastor marque una oveja como sospechosa.
-   - Genera una prueba ZK con el circuito `is_wolf`
-   - La prueba ZK se envía al contrato
+4. **The wolf generates a ZK proof to verify if the marked sheep is the wolf**:
+   - The wolf's frontend is waiting for the shepherd to mark a sheep as suspicious
+   - Generates a ZK proof with the `is_wolf` circuit
+   - The ZK proof is sent to the contract
 
-5. **Verificación del lobo**:
-   - El contrato verifica la prueba ZK y determina el resultado
-   - El resultado (1=es lobo, 0=no es lobo) se obtiene sin revelar la identidad del lobo
-   - Solo si se encuentra al lobo (resultado=1), termina la ronda
-   - Si no se encuentra al lobo, se guarda la partida para la siguiente ronda
+5. **Wolf verification**:
+   - The contract verifies the ZK proof and determines the result
+   - The result (1=is wolf, 0=is not wolf) is obtained without revealing the wolf's identity
+   - Only if the wolf is found (result=1), the round ends
+   - If the wolf is not found, the game is saved for the next round
