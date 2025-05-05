@@ -336,10 +336,12 @@ pub mod game_system {
                         sheeps_values.append(store.get_cell(i).value);
                     }
                     i += 1;
-                }
+                };
 
                 // mezclar los indices
                 
+                random::LCG(seed);
+                let sections = random::get_random_number_zero_indexed(seed, range);
                 
                 
             }
