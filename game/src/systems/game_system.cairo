@@ -95,7 +95,7 @@ pub mod game_system {
             
             // Validations
             assert(game.state == GameState::WaitingForPlayer2, 'Game not waiting for player 2');
-            assert(player_2 != game.player_1, 'Cannot join your own game');
+            // assert(player_2 != game.player_1, 'Cannot join your own game');
             assert(player_2.is_non_zero(), 'Invalid player_2 address');
 
             // Get round
@@ -106,9 +106,7 @@ pub mod game_system {
             game.shepherd = player_2; // Player 2 starts as shepherd
             game.state = GameState::InProgress; // Game starts immediately in InProgress
             
-            // No need for wolf commitment since player 1 always starts as wolf
-            // We can skip the WaitingForWolfCommitment state
-            round.state = RoundState::WaitingForSheepToKill;
+            round.state = RoundState::WaitingForWolfCommitment;
             round.current_turn = game.wolf; // Set initial turn to Wolf player
 
             store.set_game(game);
@@ -195,6 +193,7 @@ pub mod game_system {
 
             // Change turn to Shepherd
             round.current_turn = game.shepherd;
+            round.state = RoundState::WaitingForWolfSelection;
 
             store.set_round(round);
             store.set_game(game);
@@ -213,7 +212,7 @@ pub mod game_system {
 
             // Get round
             let mut round = store.get_round(game_id);
-            assert(round.state == RoundState::WaitingForSheepToKill, 'not in WaitingForSheepToKill');
+            assert(round.state == RoundState::WaitingForWolfSelection, 'not in WaitingForWolfSelection');
             assert(round.current_turn == game.shepherd, 'Not shepherd turn');
 
             // Validate sheep number
@@ -279,7 +278,7 @@ pub mod game_system {
                 game.round_count += 1;
 
                 // Reiniciar el estado para la nueva ronda
-                round.surviving_sheep = 16;
+                round.surviving_sheep = SHEEP_COUNT;
                 round.wolf_commitment = 0;
                 round.state = RoundState::WaitingForWolfCommitment;
                 round.current_turn = game.wolf; // Reset turn to Wolf
@@ -315,12 +314,6 @@ pub mod game_system {
                     store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
                     i += 1;
                 };
-                
-                // Set next round to start with Wolf's turn
-                if game.state == GameState::InProgress {
-                    round.current_turn = game.wolf;
-                    round.state = RoundState::WaitingForSheepToKill;
-                }
             } else {
 
                 // Marcar oveja como muerta
@@ -329,12 +322,7 @@ pub mod game_system {
                 store.set_cell(sheep_to_check);
                 round.surviving_sheep -= 1;
 
-                // Incrementar puntuación del pastor actual
-                if game.shepherd == game.player_1 {
-                    game.player_1_score += 1;
-                } else {
-                    game.player_2_score += 1;
-                }
+                round.state = RoundState::WaitingForSheepToKill;
 
                 // hay que mezclar solamente las ovejas vivas
                 // basicamente son todos los cells con el campo is_alive = true
