@@ -1,7 +1,7 @@
 use core::{integer::{U256DivRem, u256_try_as_non_zero}};
+use dojo_starter::utils::cartridge::vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 
 use starknet::{ContractAddress, contract_address_const, get_block_timestamp, get_caller_address, get_tx_info};
-use dojo_starter::utils::cartridge::vrf::{IVrfProviderDispatcher, IVrfProviderDispatcherTrait, Source};
 
 const MAINNET_CHAIN_ID: felt252 = 0x534e5f4d41494e;
 const SEPOLIA_CHAIN_ID: felt252 = 0x534e5f5345504f4c4941;
@@ -36,7 +36,7 @@ fn LCG(seed: u128) -> u128 {
     (a * seed + c) % m
 }
 
-fn get_random_card_index(seed: u128, card_pool: Span<u8>) -> u8 {
+fn get_random_card_index(seed: u128, card_pool: Span<u32>) -> u32 {
     let index: u32 = (seed % card_pool.len().into()).try_into().unwrap();
 
     *card_pool.at(index)

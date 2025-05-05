@@ -25,4 +25,3 @@ sozo execute dojo_starter-game_system shepherd_mark_suspicious 1 3 --wait --worl
 # jugador sube el resultado si es el lobo
 
 sozo execute dojo_starter-game_system check_is_wolf 1 0 --wait --world 0x0193e3437b867035092ddd89f1c09281e51e2d21692457d6e8e65f680ee05fe8
-

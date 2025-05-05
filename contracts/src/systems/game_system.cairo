@@ -14,15 +14,14 @@ pub mod game_system {
     use dojo_starter::models::{Cell, Game, GameState, Round, RoundState};
 
     use dojo_starter::store::StoreTrait;
+    use dojo_starter::utils::random;
+    use dojo_starter::utils::shuffle;
     use starknet::get_caller_address;
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
-    use dojo_starter::utils::random;
-
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
         0x07cf4e898d91e2b094bee27d06d3a610e938aba2ddec143822c6eeccc1637d51;
-    const IS_WOLF_VERIFIER_CLASSHASH: felt252 =
-        0x009e699bc08c4e82bca81a1f111c9e2b47d09e237980a90bba1412fe59a497ae;
+    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x009e699bc08c4e82bca81a1f111c9e2b47d09e237980a90bba1412fe59a497ae;
 
     const MAX_ROUNDS_PER_ROLE: u32 = 3; // 3 rondas como lobo, 3 rondas como pastor
     const TOTAL_ROUNDS: u32 = MAX_ROUNDS_PER_ROLE * 2; // 6 rondas en total por juego
@@ -70,7 +69,7 @@ pub mod game_system {
                         surviving_sheep: SHEEP_COUNT,
                         state: RoundState::WaitingForWolfCommitment,
                         suspicious_sheep_index: 999,
-                        current_turn: player_1, // Initial turn is wolf's (player_1)
+                        current_turn: player_1 // Initial turn is wolf's (player_1)
                     },
                 );
 
@@ -91,7 +90,7 @@ pub mod game_system {
 
             // Get game
             let mut game = store.get_game(game_id);
-            
+
             // Validations
             assert(game.state == GameState::WaitingForPlayer2, 'Game not waiting for player 2');
             // assert(player_2 != game.player_1, 'Cannot join your own game');
@@ -99,12 +98,12 @@ pub mod game_system {
 
             // Get round
             let mut round = store.get_round(game_id);
-            
+
             // Update game
             game.player_2 = player_2;
             game.shepherd = player_2; // Player 2 starts as shepherd
             game.state = GameState::InProgress; // Game starts immediately in InProgress
-            
+
             round.state = RoundState::WaitingForWolfCommitment;
             round.current_turn = game.wolf; // Set initial turn to Wolf player
 
@@ -137,9 +136,7 @@ pub mod game_system {
             store.set_game(game);
         }
 
-        fn wolf_kill_sheep(
-            ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32,
-        ) {
+        fn wolf_kill_sheep(ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
 
@@ -165,7 +162,8 @@ pub mod game_system {
             //     proof,
             // )
             //     .unwrap_syscall();
-            // let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res).unwrap().expect('Proof is invalid');
+            // let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res).unwrap().expect('Proof is
+            // invalid');
 
             // let wolf_commitment = *public_inputs[0];
             // let sheep_to_kill_index: u32 = (*public_inputs[1]).try_into().unwrap();
@@ -255,7 +253,8 @@ pub mod game_system {
             //     proof,
             // )
             //     .unwrap_syscall();
-            // let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res).unwrap().expect('Proof is invalid');
+            // let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res).unwrap().expect('Proof is
+            // invalid');
 
             // We don't know if it's the wolf yet - the proof will tell us
             // The verifier verifies that is_wolf is calculated correctly
@@ -266,7 +265,11 @@ pub mod game_system {
             // TODO: remove this
             let wolf_commitment = round.wolf_commitment;
             let sheep_to_check_index = round.suspicious_sheep_index;
-            let is_wolf_result = if sheep_to_check_index == 4 { 1 } else { 0 }; 
+            let is_wolf_result = if sheep_to_check_index == 4 {
+                1
+            } else {
+                0
+            };
 
             assert(wolf_commitment == round.wolf_commitment, 'Invalid wolf commitment');
             assert(sheep_to_check_index == round.suspicious_sheep_index, 'Invalid sheep to check');
@@ -281,7 +284,7 @@ pub mod game_system {
                 round.wolf_commitment = 0;
                 round.state = RoundState::WaitingForWolfCommitment;
                 round.current_turn = game.wolf; // Reset turn to Wolf
-                
+
                 // After 3 rounds, when roles swap, we need to wait for wolf commitment
                 if game.round_count == MAX_ROUNDS_PER_ROLE {
                     // Intercambiar roles después de 3 rondas
@@ -305,7 +308,7 @@ pub mod game_system {
                         // Empate
                         game.winner = Zeroable::zero();
                     }
-                } 
+                }
 
                 // Reset: Limpiar todas las marcas de oveja sospechosa para la nueva ronda
                 let mut i: u32 = 0;
@@ -314,7 +317,6 @@ pub mod game_system {
                     i += 1;
                 };
             } else {
-
                 // Marcar oveja como muerta
                 let mut sheep_to_check = store.get_cell(sheep_to_check_index);
                 sheep_to_check.is_alive = false;
@@ -323,9 +325,8 @@ pub mod game_system {
 
                 round.state = RoundState::WaitingForSheepToKill;
 
-                
                 let random_hash = random::get_random_hash();
-                let mut seed: u128 = random::get_entropy(random_hash);
+                let seed = random::get_entropy(random_hash);
 
                 let mut sheeps_indexes = array![];
                 let mut sheeps_values = array![];
@@ -338,12 +339,15 @@ pub mod game_system {
                     i += 1;
                 };
 
-                // mezclar los indices
-                
-                random::LCG(seed);
-                let sections = random::get_random_number_zero_indexed(seed, range);
-                
-                
+                let shuffled_sheep_indexes = shuffle::shuffle(seed, sheeps_indexes.span());
+                let mut j: u32 = 0;
+                while j < shuffled_sheep_indexes.len() {
+                    store
+                        .set_cell(
+                            Cell { id: *shuffled_sheep_indexes.at(j), value: *sheeps_values.at(j), is_alive: true },
+                        );
+                    j += 1;
+                };
             }
 
             store.set_game(game);

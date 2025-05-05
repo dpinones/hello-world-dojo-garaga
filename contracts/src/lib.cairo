@@ -6,8 +6,8 @@ pub mod models;
 
 pub mod utils {
     pub mod cartridge;
-    pub mod constants;
     pub mod random;
+    pub mod shuffle;
 }
 
 pub mod store;
