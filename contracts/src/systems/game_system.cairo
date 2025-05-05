@@ -17,7 +17,7 @@ pub mod game_system {
     use starknet::get_caller_address;
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
-
+    use dojo_starter::utils::random;
 
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
         0x07cf4e898d91e2b094bee27d06d3a610e938aba2ddec143822c6eeccc1637d51;
@@ -323,34 +323,25 @@ pub mod game_system {
 
                 round.state = RoundState::WaitingForSheepToKill;
 
-                // hay que mezclar solamente las ovejas vivas
-                // basicamente son todos los cells con el campo is_alive = true
-                // hay que mezclarlos en una lista
-                // y luego asignarlos de nuevo a los cells
-                // pero no se puede usar el store.set_cell porque no se puede iterar sobre los cells
-                // hay que usar un array
                 
-                // let mut sheep_count: u32 = 0;
-                // let mut sheep_array: [Cell; SHEEP_COUNT] = [Cell { id: 0, value: 0, is_alive: false }; SHEEP_COUNT];
-                // let mut i: u32 = 0;
-                // while i < SHEEP_COUNT {
-                //     if store.get_cell(i).is_alive {
-                //         sheep_array[sheep_count] = store.get_cell(i);
-                //         sheep_count += 1;
-                //     }
-                //     i += 1;
-                // }
+                let random_hash = random::get_random_hash();
+                let mut seed: u128 = random::get_entropy(random_hash);
 
-                // // mezclar el array
-                // let mut rng = rand::thread_rng();
-                // sheep_array.shuffle(&mut rng);
+                let mut sheeps_indexes = array![];
+                let mut sheeps_values = array![];
+                let mut i: u32 = 0;
+                while i < SHEEP_COUNT {
+                    if store.get_cell(i).is_alive {
+                        sheeps_indexes.append(i);
+                        sheeps_values.append(store.get_cell(i).value);
+                    }
+                    i += 1;
+                }
 
-                // // asignar los cells de nuevo
-                // i = 0;
-                // while i < sheep_count {
-                //     store.set_cell(sheep_array[i]);
-                //     i += 1;
-                // }
+                // mezclar los indices
+                
+                
+                
             }
 
             store.set_game(game);
