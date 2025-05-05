@@ -1,11 +1,11 @@
 # Ejemplo del Juego "Hunting the Wolf" en un Tablero 4x4
 
-En este ejemplo, ilustraremos el juego en un tablero 4x4 con 16 ovejas (numeradas del 0 al 15) para mostrar los dos escenarios principales: cuando el pastor no encuentra al lobo y cuando finalmente lo encuentra.
+En este ejemplo, ilustraremos el juego en un tablero 4x4 con 16 ovejas (numeradas del 1 al 16) para mostrar los dos escenarios principales: cuando el pastor no encuentra al lobo y cuando finalmente lo encuentra.
 
-## Configuración Inicial
+### Configuración Inicial
 
-ubicacion del lobo:
-Elijo una oveja puntual para que el lobo se esconda. En este caso, se esconde en la oveja 12(cuarta columna, tercera fila)
+**Ubicación del lobo:**
+Elijo una oveja puntual para que el lobo se esconda. En este caso, se esconde en la oveja 12 (cuarta columna, tercera fila).
 
 ```
 ┌───┬───┬───┬───┐
@@ -18,7 +18,6 @@ Elijo una oveja puntual para que el lobo se esconda. En este caso, se esconde en
 │13 │14 │15 │16 │
 └───┴───┴───┴───┘
 ```
-
 
 ### Turno del Lobo
 1. El lobo (escondido en la oveja 12) decide matar a la oveja 8 adyacente.
@@ -33,7 +32,7 @@ Elijo una oveja puntual para que el lobo se esconda. En este caso, se esconde en
 ├───┼───┼───┼───┤
 │ 5 │ 6 │ 7 │ X │ ← (X = oveja 8 muerta)
 ├───┼───┼───┼───┤
-│ 9 │10 │11 │12 │ ← (El lobo es aqui en la oveja 12)
+│ 9 │10 │11 │12 │ ← (El lobo está aquí en la oveja 12)
 ├───┼───┼───┼───┤
 │13 │14 │15 │16 │
 └───┴───┴───┴───┘
@@ -41,7 +40,7 @@ Elijo una oveja puntual para que el lobo se esconda. En este caso, se esconde en
 
 ### Turno del Pastor
 1. El pastor observa que la oveja 8 ha sido asesinada.
-2. Razona: "El lobo debe estar adyacente a 8. Podría ser 4, 3, 7, 11 u 12".
+2. Razona: "El lobo debe estar adyacente a 8. Podría ser 3, 4, 7, 11 o 12".
 3. El pastor decide marcar la oveja 4 como sospechosa.
 
 ### Verificación
@@ -53,9 +52,9 @@ Elijo una oveja puntual para que el lobo se esconda. En este caso, se esconde en
 ┌───┬───┬───┬───┐
 │ 1 │ 2 │ 3 │ X │ ← (X = oveja 4 muerta)
 ├───┼───┼───┼───┤
-│ 5 │ 6 │ 7 │ X │
+│ 5 │ 6 │ 7 │ X │ ← (X = oveja 8 muerta)
 ├───┼───┼───┼───┤
-│ 9 │10 │11 │12 │ ← (El lobo esta aqui en la oveja 12)
+│ 9 │10 │11 │12 │ ← (El lobo está aquí en la oveja 12)
 ├───┼───┼───┼───┤
 │13 │14 │15 │16 │
 └───┴───┴───┴───┘
@@ -73,36 +72,35 @@ Después de la mezcla, el tablero podría verse así (donde cada número represe
 
 ```
 ┌───┬───┬───┬───┐
-│ 7 │ 4 │16 │ X │
+│ 7 │ 2 │16 │ X │ ← (X = oveja 4 muerta)
 ├───┼───┼───┼───┤
-│ 1 │15 │ 6 │ X │
+│ 1 │15 │ 6 │ X │ ← (X = oveja 8 muerta)
 ├───┼───┼───┼───┤
-│ 2 │11 │13 │ 3 │
+│ 3 │11 │13 │10 │
 ├───┼───┼───┼───┤
-│ 9 │ 5 │10 │12 │ ← (El lobo esta aqui en la oveja 12)
+│ 9 │ 5 │14 │12 │ ← (El lobo está aquí en la oveja 12)
 └───┴───┴───┴───┘
 ```
 
-
 ### Turno del Lobo
-1. El lobo (escondido en la oveja 12) decide matar a la oveja 3 adyacente.
+1. El lobo (escondido en la oveja 12, ahora en la esquina inferior derecha) decide matar a la oveja 10 adyacente (ubicada arriba de él).
 2. El lobo genera una prueba ZK que verifica que puede matar a la oveja en esa posición.
 
 ```
 ┌───┬───┬───┬───┐
-│ 7 │ 4 │16 │ X │
+│ 7 │ 2 │16 │ X │
 ├───┼───┼───┼───┤
 │ 1 │15 │ 6 │ X │
 ├───┼───┼───┼───┤
-│ 2 │11 │13 │ X │  ← (X = oveja 3 muerta)
+│ 3 │11 │13 │ X │ ← (X = oveja 10 muerta)
 ├───┼───┼───┼───┤
-│ 9 │ 5 │10 │12 │ ← (El lobo esta aqui en la oveja 12)
+│ 9 │ 5 │14 │12 │ ← (El lobo está aquí en la oveja 12)
 └───┴───┴───┴───┘
 ```
 
 ### Turno del Pastor
-1. El pastor observa que la oveja 3 ha sido asesinada.
-2. Razona: "Esta oveja solo podía ser atacada por las ovejas en las posiciones adyacentes. Podría ser 6, 13, 10 u 12."
+1. El pastor observa que la oveja 10 ha sido asesinada.
+2. Razona: "Esta oveja solo podía ser atacada por las ovejas en las posiciones adyacentes. Podría ser 6, 13, 14 o 12".
 3. El pastor, después de analizar el patrón de muertes y movimientos, decide marcar la oveja 12 como sospechosa.
 
 ### Verificación
@@ -112,33 +110,19 @@ Después de la mezcla, el tablero podría verse así (donde cada número represe
 
 ```
 ┌───┬───┬───┬───┐
-│ 7 │ 4 │16 │ X │
+│ 7 │ 2 │16 │ X │
 ├───┼───┼───┼───┤
 │ 1 │15 │ 6 │ X │
 ├───┼───┼───┼───┤
-│ 2 │11 │13 │ X │
+│ 3 │11 │13 │ X │
 ├───┼───┼───┼───┤
-│ 9 │ 5 │10 │ L │ ← (L = lobo encontrado)
+│ 9 │ 5 │14 │ L │ ← (L = lobo encontrado)
 └───┴───┴───┴───┘
 ```
 
 La ronda termina con el pastor habiendo encontrado exitosamente al lobo.
-Al empezar la siguiente ronda, el lobo se esconde en una nueva oveja y el juego continua.
+
+Al empezar la siguiente ronda, el lobo se esconde en una nueva oveja y el juego continúa.
 El jugador 1 durante los primeros 3 turnos es el lobo, y el jugador 2 es el pastor. 
-En los proximos 3 turnos, se invierten los roles.
-Gana el que mas ovejas mata siendo el lobo.
-
-## Explicación del Mecanismo ZK
-
-En este ejemplo se ilustran los dos circuitos ZK esenciales:
-
-1. **kill_sheep**: Permitió al lobo matar ovejas adyacentes sin revelar su posición.
-
-2. **is_wolf**: Verificó si la oveja marcada por el pastor era o no el lobo.
-
-Lo importante es que en ningún momento el lobo tuvo que revelar su identidad directamente. El sistema de pruebas ZK garantizó que:
-- Solo el verdadero lobo pudiera matar ovejas (validez)
-- Solo las ovejas adyacentes pudieran ser asesinadas (reglas del juego)
-- La mezcla entre rondas añade un nivel extra de complejidad y secretismo
-
-Todo esto mientras mantenía en secreto la identidad del lobo hasta que fue correctamente identificado por el pastor. 
+En los próximos 3 turnos, se invierten los roles.
+Gana el que más ovejas mata siendo el lobo.
