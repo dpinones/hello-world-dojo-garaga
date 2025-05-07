@@ -1,12 +1,12 @@
 #!/bin/bash
 
+cd verifier_is_wolf
+
 source .env
 set -e
 
 GREEN='\e[32m'
 RESET='\e[0m'
-
-cd verifier_is_wolf
 
 # Declare all contracts
 echo -e "$GREEN\n==> Declare IsWolf$RESET"

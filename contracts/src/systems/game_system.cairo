@@ -21,8 +21,8 @@ pub mod game_system {
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
-        0x07cf4e898d91e2b094bee27d06d3a610e938aba2ddec143822c6eeccc1637d51;
-    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x009e699bc08c4e82bca81a1f111c9e2b47d09e237980a90bba1412fe59a497ae;
+    0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
+    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x0674595b48f3d6983187fa6a2f435d70420a05696723077474126d4d8bfb46eb;
 
     const MAX_ROUNDS_PER_ROLE: u32 = 3; // 3 rondas como lobo, 3 rondas como pastor
     const TOTAL_ROUNDS: u32 = MAX_ROUNDS_PER_ROLE * 2; // 6 rondas en total por juego

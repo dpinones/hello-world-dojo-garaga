@@ -1,12 +1,12 @@
 #!/bin/bash
 
+cd verifier_kill_sheep
+
 source .env
 set -e
 
 GREEN='\e[32m'
 RESET='\e[0m'
-
-cd verifier_kill_sheep
 
 # Declare all contracts
 echo -e "$GREEN\n==> Declare KillSheep$RESET"
