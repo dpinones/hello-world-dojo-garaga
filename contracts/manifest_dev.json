@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x215531bcdafd9fa07840ef0b16ac3bcad0059a3945b2fb1aad3ad0843da9423",
-      "class_hash": "0x22ff378ec114b60e162eda54fcad13efe98ede197c7de24692c2be97d906001",
+      "address": "0x4c8b0988ca60d3e22bfcbae3c6eb25ee215776bc97cd6436e10511e9d55d1e4",
+      "class_hash": "0x636fadc368b172fc6e9932185922c1b0fedf4d0916b43dd55af33a0d0f20c6d",
       "abi": [
         {
           "type": "impl",
@@ -1641,6 +1641,13 @@
       "selector": "0x134ea5dcc03fa26c5aa03fc22c2c1be047c3d335eedb4ce229729c57f014c1"
     }
   ],
-  "events": [],
+  "events": [
+    {
+      "members": [],
+      "class_hash": "0x73d4a9769254dffd5cd14f0ee9b00c34ddf6ffb7b516865235011f3f3788f35",
+      "tag": "dojo_starter-CreateGameEvent",
+      "selector": "0x25195e1658cc86324f0c2990edd7709eb7690d67b8543c12cb1ec779c6e45e2"
+    }
+  ],
   "external_contracts": []
 }

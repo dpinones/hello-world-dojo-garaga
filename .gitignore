@@ -1,1 +1,9 @@
 /garaga-venv
+
+/verifier_is_wolf/target
+/verifier_is_wolf/.env
+
+/verifier_kill_sheep/target
+/verifier_kill_sheep/.env
+
+/contracts/target

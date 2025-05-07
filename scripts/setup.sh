@@ -1,6 +1,9 @@
 #!/bin/bash
 
 set -e
+
+cd contracts
+
 if [ -d "target" ]; then
     rm -rf "target"
 fi

@@ -2,6 +2,7 @@
 
 set -e
 
+cd contracts
 # Limpiar carpetas antiguas si existen
 if [ -d "target" ]; then
     rm -rf "target"
