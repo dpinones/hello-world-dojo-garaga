@@ -29,7 +29,7 @@ pub mod game_system {
     const SHEEP_COUNT: u32 = 16;
 
     pub fn DEFAULT_NS() -> ByteArray {
-        "dojo_starter"
+        "wolf_game_zk2"
     }
 
     #[abi(embed_v0)]
