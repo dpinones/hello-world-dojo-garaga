@@ -74,3 +74,11 @@ impl RoundStateIntoFelt252 of Into<RoundState, felt252> {
         }
     }
 }
+
+#[derive(Copy, Drop, Serde)]
+#[dojo::event]
+pub struct CreateGameEvent {
+    #[key]
+    pub player: ContractAddress,
+    pub game_id: u32,
+}

@@ -10,8 +10,9 @@ pub trait IGameSystem<T> {
 
 #[dojo::contract]
 pub mod game_system {
+    use dojo::event::EventStorage;
     use dojo::world::IWorldDispatcherTrait;
-    use dojo_starter::models::{Cell, Game, GameState, Round, RoundState};
+    use dojo_starter::models::{Cell, CreateGameEvent, Game, GameState, Round, RoundState};
 
     use dojo_starter::store::StoreTrait;
     use dojo_starter::utils::random;
@@ -79,6 +80,9 @@ pub mod game_system {
                 store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
                 i += 1;
             };
+
+            world.emit_event(@CreateGameEvent { player: get_caller_address(), game_id });
+
             game_id
         }
 
