@@ -21,7 +21,7 @@ pub mod game_system {
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
-    0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
+        0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
     const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x0674595b48f3d6983187fa6a2f435d70420a05696723077474126d4d8bfb46eb;
 
     const MAX_ROUNDS_PER_ROLE: u32 = 3; // 3 rondas como lobo, 3 rondas como pastor
@@ -160,21 +160,19 @@ pub mod game_system {
             assert(store.get_cell(sheep_to_kill_index).is_alive, 'Sheep already dead');
 
             // Create public inputs array [game_id, wolf_commitment, sheep_to_kill]
-            // let mut res = syscalls::library_call_syscall(
-            //     WOLF_KILL_SHEEP_VERIFIER_CLASSHASH.try_into().unwrap(),
-            //     selector!("verify_ultra_keccak_zk_honk_proof"),
-            //     proof,
-            // )
-            //     .unwrap_syscall();
-            // let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res).unwrap().expect('Proof is
-            // invalid');
+            let mut res = syscalls::library_call_syscall(
+                WOLF_KILL_SHEEP_VERIFIER_CLASSHASH.try_into().unwrap(),
+                selector!("verify_ultra_keccak_zk_honk_proof"),
+                proof,
+            )
+                .unwrap_syscall();
+            let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res)
+                .unwrap()
+                .expect('Proof is
+            invalid');
 
-            // let wolf_commitment = *public_inputs[0];
-            // let sheep_to_kill_index: u32 = (*public_inputs[1]).try_into().unwrap();
-
-            // TODO: remove this
-            let wolf_commitment = round.wolf_commitment;
-            let sheep_to_kill_index = sheep_to_kill_index;
+            let wolf_commitment = *public_inputs[0];
+            let sheep_to_kill_index: u32 = (*public_inputs[1]).try_into().unwrap();
 
             assert(wolf_commitment == round.wolf_commitment, 'Invalid wolf commitment');
             assert(sheep_to_kill_index == sheep_to_kill_index, 'Invalid sheep to kill');
@@ -251,29 +249,20 @@ pub mod game_system {
             assert(store.get_cell(round.suspicious_sheep_index).is_alive, 'Sheep already dead');
 
             // // Create public inputs array [game_id, sheep_to_check, is_wolf]
-            // let mut res = syscalls::library_call_syscall(
-            //     IS_WOLF_VERIFIER_CLASSHASH.try_into().unwrap(),
-            //     selector!("verify_ultra_keccak_zk_honk_proof"),
-            //     proof,
-            // )
-            //     .unwrap_syscall();
-            // let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res).unwrap().expect('Proof is
-            // invalid');
+            let mut res = syscalls::library_call_syscall(
+                IS_WOLF_VERIFIER_CLASSHASH.try_into().unwrap(), selector!("verify_ultra_keccak_zk_honk_proof"), proof,
+            )
+                .unwrap_syscall();
+            let public_inputs = Serde::<Option<Span<u256>>>::deserialize(ref res)
+                .unwrap()
+                .expect('Proof is
+            invalid');
 
             // We don't know if it's the wolf yet - the proof will tell us
             // The verifier verifies that is_wolf is calculated correctly
-            // let wolf_commitment = *public_inputs[0];
-            // let sheep_to_check_index: u32 = (*public_inputs[1]).try_into().unwrap();
-            // let is_wolf_result: u32 = (*public_inputs[2]).try_into().unwrap();
-
-            // TODO: remove this
-            let wolf_commitment = round.wolf_commitment;
-            let sheep_to_check_index = round.suspicious_sheep_index;
-            let is_wolf_result = if sheep_to_check_index == 4 {
-                1
-            } else {
-                0
-            };
+            let wolf_commitment = *public_inputs[0];
+            let sheep_to_check_index: u32 = (*public_inputs[1]).try_into().unwrap();
+            let is_wolf_result: u32 = (*public_inputs[2]).try_into().unwrap();
 
             assert(wolf_commitment == round.wolf_commitment, 'Invalid wolf commitment');
             assert(sheep_to_check_index == round.suspicious_sheep_index, 'Invalid sheep to check');

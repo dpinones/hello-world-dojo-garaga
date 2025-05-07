@@ -5,7 +5,7 @@ setup:
 	@./scripts/setup.sh
 
 deploy-sepolia:
-	@./scripts/deploy_sepolia.sh
+	@./scripts/setup_sepolia.sh
 
 deploy-is-wolf:
 	./scripts/deploy_is_wolf.sh
