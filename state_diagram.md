@@ -19,7 +19,7 @@ sequenceDiagram
 
     %% 3. Compromiso del lobo (Jugador 1)
     Jugador1(Lobo)->>Frontend: Seleccionar oveja lobo
-    Frontend->>Frontend: Generar salt y commitment
+    Frontend->>Frontend: Generar commitment
     Frontend->>Blockchain: submit_wolf_commitment(game_id, wolf_commitment)
 
     %% 4. Turno del lobo (Jugador 1)
@@ -31,7 +31,7 @@ sequenceDiagram
     Jugador2(Pastor)->>Frontend: Marcar oveja sospechosa
     Frontend->>Blockchain: shepherd_mark_suspicious(game_id, sheep_to_mark_index)
 
-    Note over Jugador1(Lobo): No requiere acción del Jugador 1.
+    Note over Jugador1(Lobo): No requiere accion del Jugador 1.
 
     %% 6. Verificación del lobo (Jugador 1)
     Jugador1(Lobo)->>Frontend: Generar prueba ZK (is_wolf)
