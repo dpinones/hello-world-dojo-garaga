@@ -31,8 +31,8 @@ pub impl StoreImpl of StoreTrait {
         self.world.write_model(@round)
     }
 
-    fn get_cell(ref self: Store, id: u32) -> Cell {
-        self.world.read_model(id)
+    fn get_cell(ref self: Store, game_id: u32, idx: u32) -> Cell {
+        self.world.read_model((game_id, idx))
     }
 
     fn set_cell(ref self: Store, cell: Cell) {

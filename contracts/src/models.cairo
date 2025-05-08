@@ -32,7 +32,9 @@ pub struct Round {
 #[dojo::model]
 pub struct Cell {
     #[key]
-    pub id: u32,
+    pub game_id: u32,
+    #[key]
+    pub idx: u32,
     pub value: u32,
     pub is_alive: bool,
 }
