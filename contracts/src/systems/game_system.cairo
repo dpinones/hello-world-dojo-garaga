@@ -160,7 +160,7 @@ pub mod game_system {
 
             // Validate sheep number
             assert(sheep_to_kill_index < SHEEP_COUNT, 'Invalid sheep number');
-            assert(store.get_cell(sheep_to_kill_index).is_alive, 'Sheep already dead');
+            assert(store.get_cell(game_id, sheep_to_kill_index).is_alive, 'Sheep already dead');
 
             // Create public inputs array [game_id, wolf_commitment, sheep_to_kill]
             // let mut res = syscalls::library_call_syscall(
@@ -183,7 +183,7 @@ pub mod game_system {
             assert(sheep_to_kill_index == sheep_to_kill_index, 'Invalid sheep to kill');
 
             // Update game state
-            let mut sheep_to_kill = store.get_cell(sheep_to_kill_index);
+            let mut sheep_to_kill = store.get_cell(game_id, sheep_to_kill_index);
             sheep_to_kill.is_alive = false;
             store.set_cell(sheep_to_kill);
             round.surviving_sheep -= 1;
@@ -221,7 +221,7 @@ pub mod game_system {
 
             // Validate sheep number
             assert(sheep_to_mark_index < SHEEP_COUNT, 'Invalid sheep number');
-            assert(store.get_cell(sheep_to_mark_index).is_alive, 'Sheep already dead');
+            assert(store.get_cell(game_id, sheep_to_mark_index).is_alive, 'Sheep already dead');
 
             round.state = RoundState::WaitingForWolfResult;
             round.suspicious_sheep_index = sheep_to_mark_index;
@@ -252,7 +252,7 @@ pub mod game_system {
 
             // Validate sheep number
             assert(round.suspicious_sheep_index < SHEEP_COUNT, 'Invalid sheep number');
-            assert(store.get_cell(round.suspicious_sheep_index).is_alive, 'Sheep already dead');
+            assert(store.get_cell(game_id, round.suspicious_sheep_index).is_alive, 'Sheep already dead');
 
             // // Create public inputs array [game_id, sheep_to_check, is_wolf]
             // let mut res = syscalls::library_call_syscall(
@@ -326,7 +326,7 @@ pub mod game_system {
                 };
             } else {
                 // Marcar oveja como muerta
-                let mut sheep_to_check = store.get_cell(sheep_to_check_index);
+                let mut sheep_to_check = store.get_cell(game_id, sheep_to_check_index);
                 sheep_to_check.is_alive = false;
                 store.set_cell(sheep_to_check);
                 round.surviving_sheep -= 1;
@@ -340,9 +340,9 @@ pub mod game_system {
                 let mut sheeps_values = array![];
                 let mut i: u32 = 0;
                 while i < SHEEP_COUNT {
-                    if store.get_cell(i).is_alive {
+                    if store.get_cell(game_id, i).is_alive {
                         sheeps_indexes.append(i);
-                        sheeps_values.append(store.get_cell(i).value);
+                        sheeps_values.append(store.get_cell(game_id, i).value);
                     }
                     i += 1;
                 };
@@ -352,7 +352,12 @@ pub mod game_system {
                 while j < shuffled_sheep_indexes.len() {
                     store
                         .set_cell(
-                            Cell { game_id: game_id, idx: *shuffled_sheep_indexes.at(j), value: *sheeps_values.at(j), is_alive: true },
+                            Cell {
+                                game_id: game_id,
+                                idx: *shuffled_sheep_indexes.at(j),
+                                value: *sheeps_values.at(j),
+                                is_alive: true,
+                            },
                         );
                     j += 1;
                 };
