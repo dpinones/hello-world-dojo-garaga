@@ -3,9 +3,11 @@ pub trait IGameSystem<T> {
     fn create_game(ref self: T) -> u32;
     fn join_game(ref self: T, game_id: u32);
     fn submit_wolf_commitment(ref self: T, game_id: u32, wolf_commitment: u256);
-    fn wolf_kill_sheep(ref self: T, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32);
+    fn wolf_kill_sheep(ref self: T, game_id: u32, sheep_to_kill_index: u32);
+    // fn wolf_kill_sheep(ref self: T, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32);
     fn shepherd_mark_suspicious(ref self: T, game_id: u32, sheep_to_mark_index: u32);
-    fn check_is_wolf(ref self: T, game_id: u32, proof: Span<felt252>);
+    fn check_is_wolf(ref self: T, game_id: u32);
+    // fn check_is_wolf(ref self: T, game_id: u32, proof: Span<felt252>);
 }
 
 #[dojo::contract]
@@ -140,7 +142,8 @@ pub mod game_system {
             store.set_game(game);
         }
 
-        fn wolf_kill_sheep(ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32) {
+        // fn wolf_kill_sheep(ref self: ContractState, game_id: u32, proof: Span<felt252>, sheep_to_kill_index: u32) {
+        fn wolf_kill_sheep(ref self: ContractState, game_id: u32, sheep_to_kill_index: u32) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
 
@@ -227,7 +230,8 @@ pub mod game_system {
             store.set_round(round);
         }
 
-        fn check_is_wolf(ref self: ContractState, game_id: u32, proof: Span<felt252>) {
+        // fn check_is_wolf(ref self: ContractState, game_id: u32, proof: Span<felt252>) {
+        fn check_is_wolf(ref self: ContractState, game_id: u32) {
             let mut world = self.world(@DEFAULT_NS());
             let mut store = StoreTrait::new(ref world);
 
