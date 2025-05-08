@@ -21,7 +21,7 @@ pub mod game_system {
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
-    0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
+        0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
     const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x0674595b48f3d6983187fa6a2f435d70420a05696723077474126d4d8bfb46eb;
 
     const MAX_ROUNDS_PER_ROLE: u32 = 3; // 3 rondas como lobo, 3 rondas como pastor
@@ -77,7 +77,7 @@ pub mod game_system {
             // Initialize all sheep as alive and not marked
             let mut i: u32 = 0;
             while i < SHEEP_COUNT {
-                store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
+                store.set_cell(Cell { game_id: game_id, idx: i, value: i + 1, is_alive: true });
                 i += 1;
             };
 
@@ -317,7 +317,7 @@ pub mod game_system {
                 // Reset: Limpiar todas las marcas de oveja sospechosa para la nueva ronda
                 let mut i: u32 = 0;
                 while i < SHEEP_COUNT {
-                    store.set_cell(Cell { id: i, value: i + 1, is_alive: true });
+                    store.set_cell(Cell { game_id: game_id, idx: i, value: i + 1, is_alive: true });
                     i += 1;
                 };
             } else {
@@ -348,7 +348,7 @@ pub mod game_system {
                 while j < shuffled_sheep_indexes.len() {
                     store
                         .set_cell(
-                            Cell { id: *shuffled_sheep_indexes.at(j), value: *sheeps_values.at(j), is_alive: true },
+                            Cell { game_id: game_id, idx: *shuffled_sheep_indexes.at(j), value: *sheeps_values.at(j), is_alive: true },
                         );
                     j += 1;
                 };
