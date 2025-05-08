@@ -273,7 +273,7 @@ pub mod game_system {
             // TODO: remove this
             let wolf_commitment = round.wolf_commitment;
             let sheep_to_check_index = round.suspicious_sheep_index;
-            let is_wolf_result = if sheep_to_check_index == 4 {
+            let is_wolf_result = if sheep_to_check_index == 1 {
                 1
             } else {
                 0
