@@ -97,7 +97,7 @@ pub mod game_system {
 
             // Validations
             assert(game.state == GameState::WaitingForPlayer2, 'Game not waiting for player 2');
-            // assert(player_2 != game.player_1, 'Cannot join your own game');
+            assert(player_2 != game.player_1, 'Cannot join your own game');
             assert(!player_2.is_zero(), 'Invalid player_2 address');
 
             // Get round
