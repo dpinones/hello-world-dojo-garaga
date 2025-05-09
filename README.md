@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e1bf9612-665a-45ad-99f3-b53886559465" width="300">
+</p>
+
 # Hunting the Wolf - ZK Game
 
 A deduction game where a wolf hides among sheep and a shepherd tries to find it, using zero-knowledge proofs (ZK) to keep the wolf's identity hidden.
