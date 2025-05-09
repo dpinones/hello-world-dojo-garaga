@@ -7,7 +7,7 @@ seed = "dojo_starter_zk1"
 default = "wolf_game_zk4"
 
 [env]
-rpc_url = "https://starknet-sepolia.public.blastapi.io/rpc/v0_7"
+rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
 # rpc_url = "https://api.cartridge.gg/x/starknet/sepolia"
 # Default account for katana with seed = 0
 account_address = "0x053c80dd051d0a515ba87dc8a3a32d56dc792e30d046ced89c6a537364e3435e"

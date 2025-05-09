@@ -22,7 +22,7 @@ pub mod game_system {
     use super::IGameSystem;
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
         0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
-    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x0674595b48f3d6983187fa6a2f435d70420a05696723077474126d4d8bfb46eb;
+    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x02a11852eae569da37f0070d781beb034888631f5e8374d661f0559fc2e0e4d8;
 
     const MAX_ROUNDS_PER_ROLE: u32 = 3; // 3 rondas como lobo, 3 rondas como pastor
     const TOTAL_ROUNDS: u32 = MAX_ROUNDS_PER_ROLE * 2; // 6 rondas en total por juego

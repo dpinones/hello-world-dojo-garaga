@@ -2,6 +2,8 @@
 
 cd verifier_kill_sheep
 
+scarb build
+
 source .env
 set -e
 

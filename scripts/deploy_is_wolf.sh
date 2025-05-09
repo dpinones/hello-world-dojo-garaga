@@ -2,6 +2,8 @@
 
 cd verifier_is_wolf
 
+scarb build
+
 source .env
 set -e
 
