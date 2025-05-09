@@ -51,7 +51,7 @@ pub mod game_system {
                 .set_game(
                     Game {
                         id: game_id,
-                        round_count: 0,
+                        round_count: 1,
                         state: GameState::WaitingForPlayer2,
                         player_1: player_1,
                         player_2: player_2,
@@ -294,7 +294,7 @@ pub mod game_system {
                 round.current_turn = game.wolf; // Reset turn to Wolf
 
                 // After 3 rounds, when roles swap, we need to wait for wolf commitment
-                if game.round_count == MAX_ROUNDS_PER_ROLE {
+                if game.round_count == MAX_ROUNDS_PER_ROLE + 1 {
                     // Intercambiar roles después de 3 rondas
                     let temp = game.wolf;
                     game.wolf = game.shepherd;
@@ -304,7 +304,7 @@ pub mod game_system {
                 }
 
                 // Si se completaron todas las rondas (6), finalizar el juego
-                if game.round_count == TOTAL_ROUNDS {
+                if game.round_count == TOTAL_ROUNDS + 1 {
                     game.state = GameState::Finished;
 
                     // Determinar ganador
