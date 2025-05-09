@@ -190,9 +190,9 @@ pub mod game_system {
 
             // Incrementar puntuación del lobo actual
             if game.wolf == game.player_1 {
-                game.player_1_score += 1;
+                game.player_1_score += 100;
             } else {
-                game.player_2_score += 1;
+                game.player_2_score += 100;
             }
 
             // Change turn to Shepherd
