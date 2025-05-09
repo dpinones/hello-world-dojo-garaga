@@ -1312,8 +1312,8 @@
   },
   "contracts": [
     {
-      "address": "0x7cec66ec32d437eb22d56735a6befe1327e28bfbb3a3dbe6beb92fe5d93a7da",
-      "class_hash": "0x407bf0a1f72383971cae511614fbafabae5d32d615988b35ad77d20c49b8976",
+      "address": "0x1d4706a10f14f47b4754037bd5bf76b6bb8b94f657a0d1621768850a50c32b0",
+      "class_hash": "0x2329c10aa188e4ddbee95bb5fb37fcde23cae1de019fe34977869d970141977",
       "abi": [
         {
           "type": "impl",
@@ -1385,16 +1385,6 @@
           ]
         },
         {
-          "type": "struct",
-          "name": "core::array::Span::<core::felt252>",
-          "members": [
-            {
-              "name": "snapshot",
-              "type": "@core::array::Array::<core::felt252>"
-            }
-          ]
-        },
-        {
           "type": "interface",
           "name": "dojo_starter::systems::game_system::IGameSystem",
           "items": [
@@ -1446,10 +1436,6 @@
                   "type": "core::integer::u32"
                 },
                 {
-                  "name": "proof",
-                  "type": "core::array::Span::<core::felt252>"
-                },
-                {
                   "name": "sheep_to_kill_index",
                   "type": "core::integer::u32"
                 }
@@ -1480,10 +1466,6 @@
                 {
                   "name": "game_id",
                   "type": "core::integer::u32"
-                },
-                {
-                  "name": "proof",
-                  "type": "core::array::Span::<core::felt252>"
                 }
               ],
               "outputs": [],
@@ -1607,8 +1589,8 @@
         }
       ],
       "init_calldata": [],
-      "tag": "wolf_game_zk2-game_system",
-      "selector": "0x319733fee191232e4711d75b96e03c7b17e8ba3532201485fce8297c2af93fe",
+      "tag": "wolf_game_zk3-game_system",
+      "selector": "0x740051e2a84012e9dd9c82bbface89e7ab370edb5d2e57f47907449d5d32463",
       "systems": [
         "create_game",
         "join_game",
@@ -1624,29 +1606,29 @@
   "models": [
     {
       "members": [],
-      "class_hash": "0xd0faefd395baf265a55afb88aca3e6d539dd35ba9ff467a921410630f1f027",
-      "tag": "wolf_game_zk2-Cell",
-      "selector": "0x422a7fe1c01daf5b29ece20d024fb187c4347f5201a0668928d0f4d5f36b21b"
+      "class_hash": "0x54f73635043810d547d3891d2cf5d2c7ae0f7a42eee40c5ca842059121da323",
+      "tag": "wolf_game_zk3-Cell",
+      "selector": "0x6c73d677274efa133fa5e5e92e1fb0ab77d9c93fe00f38809b8e8f35b603b2f"
     },
     {
       "members": [],
       "class_hash": "0xed4f82c4baa6fa377c7f9e6a2bee82322dea801c6be87b66270f0c23c1a4a8",
-      "tag": "wolf_game_zk2-Game",
-      "selector": "0x8bbeb76b1309207f4ce8c50863a879cb7d7e61332e7ba465dfde4fdc7163c7"
+      "tag": "wolf_game_zk3-Game",
+      "selector": "0x584b4d8a4c1cc90b33f590f221a29d888d9f81e38c9059d0a80d595d63d0d51"
     },
     {
       "members": [],
       "class_hash": "0x6e24f774c29682048aac477e4e92551442ccbc5454344550ccc560077971465",
-      "tag": "wolf_game_zk2-Round",
-      "selector": "0x151c3e874e973cf3ef4cdc9323e932a49e21bfcde10db3aeeee176c0f69ad52"
+      "tag": "wolf_game_zk3-Round",
+      "selector": "0x266ea9f9e335f524666441dd9a878b9e8d28687945352442aabd60e75e9789b"
     }
   ],
   "events": [
     {
       "members": [],
       "class_hash": "0x73d4a9769254dffd5cd14f0ee9b00c34ddf6ffb7b516865235011f3f3788f35",
-      "tag": "wolf_game_zk2-CreateGameEvent",
-      "selector": "0x87c6e6ee26458d0e617c2dc5ef9d7f9e8f86082a7129a1c62c4eef9cb10a19"
+      "tag": "wolf_game_zk3-CreateGameEvent",
+      "selector": "0x299cef9a7f73b5e514795908f42f385ef4857dae778d9b2a5455c9aef476ad5"
     }
   ],
   "external_contracts": []
