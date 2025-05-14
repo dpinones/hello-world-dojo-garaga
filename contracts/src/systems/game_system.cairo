@@ -21,8 +21,8 @@ pub mod game_system {
     use starknet::{SyscallResultTrait, syscalls};
     use super::IGameSystem;
     const WOLF_KILL_SHEEP_VERIFIER_CLASSHASH: felt252 =
-        0x04547e3540e6280c3df545cc1ae63c593900ec9e8232dff9a64f35a05330b189;
-    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x02a11852eae569da37f0070d781beb034888631f5e8374d661f0559fc2e0e4d8;
+    0x066ad883ac3800a21dad2144d202705dbb64ad1253befe7d98762c1559e59318;
+    const IS_WOLF_VERIFIER_CLASSHASH: felt252 = 0x044f5c63b167cc7bc8bf536e658d4ffa04072ebbd4862a3284f54253cee7b14c;
 
     const MAX_ROUNDS_PER_ROLE: u32 = 3; // 3 rondas como lobo, 3 rondas como pastor
     const TOTAL_ROUNDS: u32 = MAX_ROUNDS_PER_ROLE * 2; // 6 rondas en total por juego
@@ -97,7 +97,7 @@ pub mod game_system {
 
             // Validations
             assert(game.state == GameState::WaitingForPlayer2, 'Game not waiting for player 2');
-            assert(player_2 != game.player_1, 'Cannot join your own game');
+            // assert(player_2 != game.player_1, 'Cannot join your own game');
             assert(!player_2.is_zero(), 'Invalid player_2 address');
 
             // Get round
@@ -162,7 +162,7 @@ pub mod game_system {
             //  Create public inputs array [game_id, wolf_commitment, sheep_to_kill]
             let mut res = syscalls::library_call_syscall(
                 WOLF_KILL_SHEEP_VERIFIER_CLASSHASH.try_into().unwrap(),
-                selector!("verify_ultra_keccak_zk_honk_proof"),
+                selector!("verify_ultra_keccak_honk_proof"),
                 proof,
             )
                 .unwrap_syscall();
@@ -249,7 +249,7 @@ pub mod game_system {
             // Create public inputs array [game_id, sheep_to_check, is_wolf]
             let mut res = syscalls::library_call_syscall(
                 IS_WOLF_VERIFIER_CLASSHASH.try_into().unwrap(),
-                selector!("verify_ultra_keccak_zk_honk_proof"),
+                selector!("verify_ultra_keccak_honk_proof"),
                 proof,
             )
                 .unwrap_syscall();

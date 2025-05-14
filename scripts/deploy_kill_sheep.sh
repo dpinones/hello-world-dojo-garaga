@@ -20,4 +20,3 @@ DECLARED_CLASSHASH=$(starkli declare --watch \
     ./target/dev/verifier_UltraKeccakHonkVerifier.contract_class.json)
 
 echo -e "$GREEN\nDeclared Classhash: $DECLARED_CLASSHASH$RESET"
-
